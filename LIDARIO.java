@@ -1,4 +1,4 @@
-package org.team401.lidario;
+package PUT_YOUR_PACKAGE_HERE!!!
 
 import edu.wpi.first.wpilibj.I2C;
 
