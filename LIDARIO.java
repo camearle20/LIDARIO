@@ -1,7 +1,8 @@
 package PUT_YOUR_PACKAGE_HERE!!!
-
+    
 import edu.wpi.first.wpilibj.I2C;
 
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
@@ -98,6 +99,7 @@ public class LIDARIO {
     private Unit unit; //The unit to use
     private ScheduledThreadPoolExecutor executor;
     private PollTask task;
+    private ScheduledFuture<?> future;
 
     public LIDARIO(I2C.Port port, Hardware hardware, Unit unit) {
         bus = new I2C(port, hardware.address);
@@ -113,7 +115,7 @@ public class LIDARIO {
     }
 
     public void start(int period) {
-        executor.scheduleAtFixedRate(task, 0, period, TimeUnit.MILLISECONDS);
+        future = executor.scheduleAtFixedRate(task, 0, period, TimeUnit.MILLISECONDS);
     }
 
     public void start() {
@@ -121,7 +123,9 @@ public class LIDARIO {
     }
 
     public void stop() {
-        executor.remove(task);
+        if (future != null) {
+            future.cancel(false); //Stop at the next available break
+        }
     }
 
     public Data getLatestData() {
