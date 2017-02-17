@@ -49,13 +49,14 @@ public class LIDARIO {
         private Unit unit;
         private AtomicReference<Data> latestData;
         private byte[] buffer = {0,0};
-        private byte[] writeBuffer = {(byte) hardware.r2ByteRead};
+        private byte[] writeBuffer = new byte[1];
 
         private PollTask(I2C bus, Hardware hardware, Unit unit) {
             this.bus = bus;
             this.hardware = hardware;
             this.unit = unit;
             latestData = new AtomicReference<>(new Data(0, Unit.CENTIMETERS));
+            writeBuffer[0] = (byte) this.hardware.r2ByteRead;
         }
 
         @Override
@@ -120,7 +121,7 @@ public class LIDARIO {
     }
 
     public void stop() {
-        executor.shutdown();
+        executor.remove(task);
     }
 
     public Data getLatestData() {
